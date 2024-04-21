@@ -5,12 +5,33 @@
 {% block body %}
     <p>
     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-    </p>    
-        <ul>
-            {% for recipe in recipes %}
-            <li>
-                <a href="{{ path('recipe.show', {id: recipe.id, slug: recipe.slug }) }}">{{ recipe.title }}</a>
-            </li>
-            {% endfor %}
-        </ul>
+    </p>
+    <p>
+        <a class="btn btn-primary btn-sm" href="{{ path('recipe.create') }}">Créer une recette</a>
+    </p>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for recipe in recipes %}
+                <tr>
+                    <td>
+                        <a href="{{ path('recipe.show', {id: recipe.id, slug: recipe.slug}) }}">{{ recipe.title }}</a>
+                    </td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <a class="btn btn-primary btn-sm" href="{{ path('recipe.edit', {id: recipe.id}) }}">Editer</a>
+                        <form action="{{ path('recipe.delete', {id: recipe.id}) }}" method="post">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                        </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
 {% endblock %}
