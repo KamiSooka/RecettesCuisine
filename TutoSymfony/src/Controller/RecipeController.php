@@ -2,27 +2,32 @@
 
 namespace App\Controller;
 
+use App\Demo;
 use App\Entity\Recipe;
 use App\Form\RecipeType;
 use App\Repository\RecipeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class RecipeController extends AbstractController
 {
-    #[Route('/recette', name: 'recipe.index')]
+
+
+    #[Route('/recettes', name: 'recipe.index')]
     public function index(Request $request, RecipeRepository $repository): Response
-    {
+    {        
         $recipes = $repository->findWithDurationLowerThan(20);
         return $this->render('recipe/index.html.twig', [
            'recipes' => $recipes
        ]);
 
     }
-    #[Route('/recettes/{slug}-{id}', name: 'recipe.show', requirements: ['id' => '\d+', 'slug' => '[\p{L}0-9-]+'])]
+    #[Route('/recette/{slug}-{id}', name: 'recipe.show', requirements: ['id' => '\d+', 'slug' => '[\p{L}0-9-]+'])]
     public function show(Request $request, string $slug, int $id, RecipeRepository $repository): Response
     {
         $recipe = $repository->find($id);
@@ -35,9 +40,9 @@ class RecipeController extends AbstractController
         ]);
     }
 
-    #[Route('/recettes/{id}/edit', name: 'recipe.edit', methods: ['GET', 'POST'])]
-    public function edit(Recipe $recipe, Request $request, EntityManagerInterface $em): Response{
-        $form = $this->createForm(RecipeType::class, $recipe);
+    #[Route('/recette/{id}/edit', name: 'recipe.edit', methods: ['GET', 'POST'])]
+    public function edit(Recipe $recipe, Request $request, EntityManagerInterface $em, FormFactory $formFactory): Response{
+        $form = $formFactory->create(RecipeType::class, $recipe);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
